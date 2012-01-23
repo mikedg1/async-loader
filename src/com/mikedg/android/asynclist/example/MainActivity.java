@@ -19,7 +19,8 @@ public class MainActivity extends ListActivity {
 
 //        useSimpleText();
         //usePeopleCursor();
-        useCacheImageCursor();
+        //useCacheImageCursor();
+        useSimpleCacheImageCursor();
     }
     
     private void usePeopleCursor() {
@@ -36,6 +37,13 @@ public class MainActivity extends ListActivity {
 				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, null);
 	
 		CursorAdapter adapter = new ExampleCachedImageCursorAdapter(this, this, cursor, getListView());
+		this.setListAdapter(adapter);
+	}
+    private void useSimpleCacheImageCursor() {
+		Cursor cursor = this.getContentResolver().query(Images.Media.EXTERNAL_CONTENT_URI,
+				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, null);
+	
+		CursorAdapter adapter = new ExampleSimpleCachedImageCursorAdapter(this, this, cursor, getListView());
 		this.setListAdapter(adapter);
 	}
 
