@@ -34,14 +34,14 @@ public class MainActivity extends ListActivity {
 
     private void useCacheImageCursor() {
 		Cursor cursor = this.getContentResolver().query(Images.Media.EXTERNAL_CONTENT_URI,
-				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, null);
+				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, Images.Media.DATE_ADDED + " desc");
 	
 		CursorAdapter adapter = new ExampleCachedImageCursorAdapter(this, this, cursor, getListView());
 		this.setListAdapter(adapter);
 	}
     private void useSimpleCacheImageCursor() {
 		Cursor cursor = this.getContentResolver().query(Images.Media.EXTERNAL_CONTENT_URI,
-				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, null);
+				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, Images.Media.DATE_ADDED + " desc");
 	
 		CursorAdapter adapter = new ExampleSimpleCachedImageCursorAdapter(this, this, cursor, getListView());
 		this.setListAdapter(adapter);

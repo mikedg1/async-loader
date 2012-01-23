@@ -45,7 +45,7 @@ private ListView mListView; //FIXME: remove this , just for debugging
 		public void bindView(View view, Context context, Cursor cursor) {
 			Holder holder = (Holder)view.getTag();
 			int position = cursor.getPosition();
-			holder.textView.setText(position);
+			holder.textView.setText(String.valueOf(position));
 			
 			holder.progress.setVisibility(View.VISIBLE);
 			holder.view.setVisibility(View.INVISIBLE); //TODO: look into if this causes flicker
