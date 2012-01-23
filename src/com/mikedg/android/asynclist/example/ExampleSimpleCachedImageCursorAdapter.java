@@ -30,7 +30,7 @@ private ListView mListView; //FIXME: remove this , just for debugging
 		public ExampleSimpleCachedImageCursorAdapter(MainActivity mainActivity, Context context, Cursor c, ListView lv) {
 			super(context, c);
 			this.mContext = context;
-		    mAsyncLoader = new CachedAsyncLoader<String, Bitmap, Holder>(new ExampleSimpleCachedImageCursorBackgroundDoer(), new ExampleSimpleCachedImageCursorPopulator(), lv, 70);
+		    mAsyncLoader = new CachedAsyncLoader<String, Bitmap, Holder>(new ExampleSimpleCachedImageCursorBackgroundDoer(), new ExampleSimpleCachedImageCursorPopulator(), lv, 10);
 		    mListView = lv;
 		}
 

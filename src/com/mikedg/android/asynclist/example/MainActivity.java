@@ -4,6 +4,8 @@ import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
+import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 
@@ -19,11 +21,72 @@ public class MainActivity extends ListActivity {
 
 //        useSimpleText();
         //usePeopleCursor();
-        //useCacheImageCursor();
+//        hashTest();
+//        useCacheImageCursor();
         useSimpleCacheImageCursor();
+        
     }
     
-    private void usePeopleCursor() {
+    private void hashTest() {
+		// TODO Auto-generated method stub
+    	LruCache lru = new LruCache<MainActivity.HashTest, Integer>(100);
+		for (int x = 0; x < 10; x++) {
+			HashTest test = new HashTest("" + x, x);
+			Log.d("Cache", x+":test hash:" + test.hashCode());
+			
+			lru.put(test, x);
+		}
+		
+		for (int x = 0; x < 10; x++) {
+			HashTest newHash = new HashTest("" + x, x);
+			Log.d("Cache", x+ ":test hash:" + newHash.hashCode());
+			if (lru.get(newHash) != null) {
+				Log.d("Cache", "got a cach" + x);
+			} else {
+				Log.d("Cache", "not found" + x);
+			}
+		} 
+		//now do string
+		lru = new LruCache<String, Integer>(100);
+		for (int x = 0; x < 10; x++) {
+			lru.put(""+x, x);
+		}
+		
+		for (int x = 0; x < 10; x++) {
+			String newHash = "" + x;
+			if (lru.get(newHash) != null) {
+				Log.d("Cache", "got a cach" + x);
+			} else {
+				Log.d("Cache", "not found" + x);
+			}
+		} 
+	}
+    
+	public static class HashTest {
+		public final String string;
+		public final int number;
+		
+		public HashTest(String string, int number) {
+			this.string = string;
+			this.number = number;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof HashTest) {
+				if (((HashTest) o).string.equals(this.string) && ((HashTest)o).number == this.number) {
+					return true;
+				}
+			}
+			return false;
+		}
+		@Override
+		public int hashCode() {
+			return string.hashCode();
+		}
+	}
+	
+	private void usePeopleCursor() {
 		Cursor cursor = this.getContentResolver().query(Images.Media.EXTERNAL_CONTENT_URI,
 				new String[] { Images.Media._ID, Images.Media.DATA }, null, null, null);
 	

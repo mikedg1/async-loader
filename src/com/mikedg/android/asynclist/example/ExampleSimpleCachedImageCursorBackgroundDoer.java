@@ -24,6 +24,12 @@ public class ExampleSimpleCachedImageCursorBackgroundDoer implements
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inSampleSize = 8;
 			Bitmap bm = BitmapFactory.decodeStream(bis, null, o);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			// System.out.println(bm.getHeight());
 			try {
 				bis.close();

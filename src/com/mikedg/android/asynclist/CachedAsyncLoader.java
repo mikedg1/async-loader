@@ -4,9 +4,6 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.View;
 
-import com.mikedg.android.asynclist.example.ExampleCachedImageCursorAdapter.Params;
-import com.mikedg.android.asynclist.example.ExampleCachedImageCursorAdapter.Results;
-
 
 /**
  *
@@ -20,14 +17,24 @@ public class CachedAsyncLoader<E, P, H> extends AsyncLoader<E, P, H> {
 		public CachedAsyncLoader(final BackgroundDoer<E, P> doer, final Populator<P, H> pop, final View view, final int cacheSize) {
     		super(null, pop, view);
     		
-    		mCache = new LruCache<E, P>(cacheSize);
+    		mCache = new LruCache<E, P>(cacheSize) {
+    			@Override
+				protected int sizeOf(Object key, Object value)
+				{
+    				//FIXME: assume key is negligible
+    				if (value instanceof Sizable) {
+    					return ((Sizable) value).sizeOf();
+    				} else {
+    					//Assumes one for non sizables
+    					return 1;
+    				}
+			    }
+    		};
     		setBackgroundDoer(new BackgroundDoer<E, P>() {
     			public P run(E params) {
     				P results = mCache.get(params);
     	    		if (results != null) {
-    	    			if (results instanceof Results) {
-    	    				Log.d("Cache", "Got cache: results:" + ((Results)results).position + "  params:" + ((Params)params).position);
-    	    			}
+	    				Log.d("Cache", "Got cache:");
     	    		} else {
     	    			Log.d("Cache", "Get new");
         				results = doer.run(params);

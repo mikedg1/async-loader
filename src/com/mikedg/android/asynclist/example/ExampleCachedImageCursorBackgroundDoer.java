@@ -26,6 +26,13 @@ public class ExampleCachedImageCursorBackgroundDoer implements
 			Bitmap bm = BitmapFactory.decodeStream(bis, null, o);
 			// System.out.println(bm.getHeight());
 			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try {
 				bis.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
