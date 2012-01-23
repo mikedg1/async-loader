@@ -68,7 +68,7 @@ public class AsyncLoader<E, P, H> {
     		try {
 //    			if (queue.contains(pair)) { //Wonder how performance is here?
 //    				System.out.println("contains");
-    				System.out.println(queue.remove(pair)); //Better to always remove?
+    				queue.remove(pair); //Better to always remove?
 //    			} else {
 //    				System.out.println(queue.size());
 //    			}
