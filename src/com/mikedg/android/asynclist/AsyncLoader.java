@@ -1,6 +1,7 @@
 package com.mikedg.android.asynclist;
 
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -28,32 +29,7 @@ public class AsyncLoader<E, P, H> {
     		mView = view;
     		
     		//Start a new thread
-    		mThread = new Thread() {
-    			public void run() {
-    				while(true) {
-    					//FIXME: need to get out of this duh
-    					
-						try {
-							final HolderTriple<E, H> pair = queue.takeLast();
-	    					final P results = mBackgroundDoer.run(pair.params);
-	    					Log.d("Cache", "pos: " + pair.position + "    >="+((AbsListView)mView).getFirstVisiblePosition()  + "    <="+((AbsListView)mView).getLastVisiblePosition());
-	    					if (mView instanceof AbsListView)
-	    					{
-	    						Handler h = new Handler(Looper.getMainLooper());
-	    						h.post(new Runnable() {
-	    							public void run() {
-
-	    								mPopulator.populate(results, pair.holder);
-	    							}
-	    						});
-	    					} //TODO: add support for Grids
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-    				}
-    			}
-    		};
+    		mThread = new QueueThread();
     		mThread.start();
     	}
     	
@@ -73,9 +49,47 @@ public class AsyncLoader<E, P, H> {
 //    				System.out.println(queue.size());
 //    			}
 				queue.put(pair);
+				//FIXME: probably synchronoization issues here?
+				if (!mThread.isAlive()) {
+					mThread = new QueueThread();
+					mThread.start();
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+    	}
+    	
+    	private class QueueThread extends Thread {
+			public void run() {
+				while(true) {
+					//FIXME: need to get out of this duh
+					
+					try {
+						//FIXME: figure out what is optimal?
+						final HolderTriple<E, H> pair = queue.pollLast(5, TimeUnit.SECONDS);
+						if (pair == null) {
+							//We timed out so exit
+							return;
+						} else {
+	    					final P results = mBackgroundDoer.run(pair.params);
+	    					Log.d("Cache", "pos: " + pair.position + "    >="+((AbsListView)mView).getFirstVisiblePosition()  + "    <="+((AbsListView)mView).getLastVisiblePosition());
+	    					if (mView instanceof AbsListView)
+	    					{
+	    						Handler h = new Handler(Looper.getMainLooper());
+	    						h.post(new Runnable() {
+	    							public void run() {
+
+	    								mPopulator.populate(results, pair.holder);
+	    							}
+	    						});
+	    					} //TODO: add support for Grids
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
     	}
     }
